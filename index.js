@@ -47,3 +47,5 @@ const form = document.getElementById('table-form');
         status.textContent = `Complete: ${number} tables.`;
       }
     });
+
+    console.log("Hello")
