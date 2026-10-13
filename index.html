@@ -1,14 +1,109 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
+  <title>HCL Full Stack Training | Multiplication Tables</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="styles.css">
 </head>
+
 <body>
-  <p>
-    <h2>HCL Full Stack Training</h2>
-    <b>Welcome to HCL Tech.</b>
-  </p>
+  <div class="page-shell">
+    <header class="topbar">
+      <a class="brand" href="#" aria-label="HCL Learning Lab home">
+        <span class="brand-mark" aria-hidden="true">H</span>
+        <span class="brand-copy">HCL<small>LEARNING LAB</small></span>
+      </a>
+      <span class="course-meta">FULL STACK TRAINING <span class="course-number">19</span></span>
+    </header>
+
+    <main>
+      <section class="hero" aria-labelledby="page-title">
+        <div class="intro">
+          <p class="eyebrow">HCL Full Stack Training</p>
+          <h1 id="page-title">Numbers,<br><span>in motion.</span></h1>
+          <p class="welcome">Welcome to HCL Tech.</p>
+        </div>
+
+        <section class="calculator" aria-label="Multiplication table generator">
+          <form id="table-form">
+            <div class="calculator-label">
+              <label for="inp">Enter a number</label>
+              <p class="range-label">TABLES 01 TO YOUR NUMBER</p>
+            </div>
+            <div class="control-row">
+              <input type="number" id="inp" min="1" step="1" placeholder="5" required>
+              <button type="submit">Build tables</button>
+            </div>
+          </form>
+        </section>
+      </section>
+
+      <section class="results-section" aria-labelledby="results-title">
+        <div class="results-heading">
+          <h2 id="results-title">Multiplication tables</h2>
+          <span>× 1 THROUGH 10</span>
+        </div>
+        <p id="status" class="build-status" role="status" aria-live="polite"></p>
+        <div id="result" class="table-grid"></div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const form = document.getElementById('table-form');
+    const input = document.getElementById('inp');
+    const result = document.getElementById('result');
+    const status = document.getElementById('status');
+    let generation = 0;
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const number = Number(input.value);
+      const currentGeneration = ++generation;
+      result.replaceChildren();
+      status.textContent = `Building 0 of ${number} tables...`;
+
+      for (let firstTable = 1; firstTable <= number; firstTable += 10) {
+        if (currentGeneration !== generation) return;
+
+        const fragment = document.createDocumentFragment();
+        const lastTable = Math.min(firstTable + 9, number);
+
+        for (let tableNumber = firstTable; tableNumber <= lastTable; tableNumber++) {
+          const card = document.createElement('article');
+          const heading = document.createElement('h3');
+          card.className = 'table-card';
+          heading.textContent = `Table of ${tableNumber}`;
+          card.append(heading);
+
+          for (let multiplier = 1; multiplier <= 10; multiplier++) {
+            const equation = document.createElement('div');
+            const expression = document.createElement('span');
+            const answer = document.createElement('strong');
+            equation.className = 'equation';
+            expression.textContent = `${tableNumber} × ${multiplier}`;
+            answer.textContent = String(tableNumber * multiplier);
+            equation.append(expression, answer);
+            card.append(equation);
+          }
+
+          fragment.append(card);
+        }
+
+        result.append(fragment);
+        status.textContent = `Building ${lastTable} of ${number} tables...`;
+        await new Promise(resolve => requestAnimationFrame(resolve));
+      }
+
+      if (currentGeneration === generation) {
+        status.textContent = `Complete: ${number} tables.`;
+      }
+    });
+  </script>
 </body>
+
 </html>
